@@ -2,57 +2,58 @@ import time
 import board
 import neopixel
 
-
-# Choose an open pin connected to the Data In of the NeoPixel strip, i.e. board.D18
-# NeoPixels must be connected to D10, D12, D18 or D21 to work.
-pixel_pin = board.D18
-
-# The number of NeoPixels
-num_pixels = 200
-
-# The order of the pixel colors - RGB or GRB. Some NeoPixels have red and green reversed!
-# For RGBW NeoPixels, simply change the ORDER to RGBW or GRBW.
-ORDER = neopixel.GRB
-
-pixels = neopixel.NeoPixel(
-    pixel_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=ORDER
-)
-
 class Runner(object):
-    def __init__(self, pos, mod, steps, color):
+    def __init__(self, pos, mod, steps, color, num_pixels):
         self.pos = pos
         self.mod = mod
         self.steps = steps
         self.color = color
+        self.num_pixels = num_pixels
 
     def update(self):
         self.pos += self.steps * self.mod
-        self.pos = self.pos % num_pixels
+        self.pos = self.pos % self.num_pixels
 
-runners = [
-        # position, mod, steps, color
-    Runner(0 + (10 *  0), 10, 1, (255, 0, 0)),
-    Runner(5 + (10 *  6), 10, 1, (0, 255, 0)),
-    Runner(3 + (10 * 13), 10, 1, (0, 0, 255)),
-]
+class CircleRunners(object):
+    def __init__(self, num_pixels=200, pixel_pin=board.D18, brightness=1.0, pixel_order=neopixel.GRB):
+        self.num_pixels = num_pixels
+        self.pixel_pin = pixel_pin
+        self.brightness = brightness
+        self.pixel_order = pixel_order
+        self.pixels = neopixel.NeoPixel(
+            self.pixel_pin, self.num_pixels, brightness=self.brightness, auto_write=False, pixel_order=self.pixel_order
+        )
 
-def circle_runners(wait):
-    for i in range(num_pixels):
-        pixels[i] = (0,0,0)
-        for r in runners:
-            if r.pos == i:
-                pixels[i] = r.color
-    for r in runners:
-        r.update()
-    pixels.show()
-    time.sleep(wait)
+        self.runners = [
+                # position, mod, steps, color
+            Runner(0 + (10 *  0), 10, 1, (255, 0, 0), 200),
+            Runner(5 + (10 *  6), 10, 1, (0, 255, 0), 200),
+            Runner(3 + (10 * 13), 10, 1, (0, 0, 255), 200),
+            Runner(1 + (10 *  0), 10, -1, (255, 255, 0), 200),
+            Runner(4 + (10 *  6), 10, -1, (0, 255, 255), 200),
+            Runner(2 + (10 * 13), 10, -1, (255, 0, 255), 200),
+        ]
 
-try:
-    while True:
-        circle_runners(0.05) 
-except KeyboardInterrupt:
-    for i in range(num_pixels):
-        pixels[i] = (0,0,0)
-    pixels.show()
+    def circle_runners(self, wait=0.05):
+        for i in range(self.num_pixels):
+            self.pixels[i] = (0,0,0)
+            for r in self.runners:
+                if r.pos == i:
+                    self.pixels[i] = r.color
+        for r in self.runners:
+            r.update()
+        self.pixels.show()
+        time.sleep(wait)
 
+    def run(self, wait=0.05):
+        try:
+            while True:
+                self.circle_runners(wait)
+        except KeyboardInterrupt:
+            for i in range(self.num_pixels):
+                self.pixels[i] = (0,0,0)
+            self.pixels.show()
 
+if __name__ == "__main__":
+    r = CircleRunners()
+    r.run()

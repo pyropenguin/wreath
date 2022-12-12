@@ -3,40 +3,37 @@ import board
 import neopixel
 from random import sample
 
+class BlueSparkles(object):
+    def __init__(self, num_pixels=200, pixel_pin=board.D18, brightness=1.0, pixel_order=neopixel.GRB):
+        self.num_pixels = num_pixels
+        self.pixel_pin = pixel_pin
+        self.brightness = brightness
+        self.pixel_order = pixel_order
+        self.pixels = neopixel.NeoPixel(
+            self.pixel_pin, self.num_pixels, brightness=self.brightness, auto_write=False, pixel_order=self.pixel_order
+        )
 
-# Choose an open pin connected to the Data In of the NeoPixel strip, i.e. board.D18
-# NeoPixels must be connected to D10, D12, D18 or D21 to work.
-pixel_pin = board.D18
+    def blue_sparkles(self, wait=0.025):
+        num_sparkles = 30
+        sparkle_idx  = sample(range(self.num_pixels), num_sparkles)
+        for i in range(self.num_pixels):
+                        #g,r,b
+            self.pixels[i] = (0,0,32) # set background to dark blue
+            #pixels[i] = (25,32,0) # set background to yellow
+        for i in sparkle_idx:
+            self.pixels[i] = (255,255,255) # set sparkles to full white
+        self.pixels.show()
+        time.sleep(wait)
 
-# The number of NeoPixels
-num_pixels = 200
+    def run(self, wait=0.025):
+        try:
+            while True:
+                self.blue_sparkles(wait)
+        except KeyboardInterrupt:
+            for i in range(self.num_pixels):
+                self.pixels[i] = (0,0,0)
+            self.pixels.show()
 
-# The order of the pixel colors - RGB or GRB. Some NeoPixels have red and green reversed!
-# For RGBW NeoPixels, simply change the ORDER to RGBW or GRBW.
-ORDER = neopixel.GRB
-
-pixels = neopixel.NeoPixel(
-    pixel_pin, num_pixels, brightness=1.0, auto_write=False, pixel_order=ORDER
-)
-
-def blue_sparkles(wait):
-    num_sparkles = 30
-    sparkle_idx  = sample(range(num_pixels), num_sparkles)
-    for i in range(num_pixels):
-                    #g,r,b
-        pixels[i] = (0,0,32) # set background to dark blue
-        #pixels[i] = (25,32,0) # set background to yellow
-    for i in sparkle_idx:
-        pixels[i] = (255,255,255) # set sparkles to full white
-    pixels.show()
-    time.sleep(wait)
-
-try:
-    while True:
-        blue_sparkles(0.025)  # candy cane cycle with 100ms delay per step
-except KeyboardInterrupt:
-    for i in range(num_pixels):
-        pixels[i] = (0,0,0)
-    pixels.show()
-
-
+if __name__ == "__main__":
+    b = BlueSparkles()
+    b.run()
