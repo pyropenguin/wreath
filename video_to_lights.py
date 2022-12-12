@@ -10,7 +10,7 @@ SET_PIXELS = True
 SHOW_FRAME = False
 
 class VideoToLights(object):
-    def __init__(self, num_pixels=200, pixel_pin=board.D18, brightness=0.9, pixel_order=neopixel.GRB):
+    def __init__(self, num_pixels=200, pixel_pin=board.D18, brightness=0.4, pixel_order=neopixel.GRB):
         self.num_pixels = num_pixels
         self.pixel_pin = pixel_pin
         self.brightness = brightness

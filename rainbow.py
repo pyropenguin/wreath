@@ -33,7 +33,7 @@ class Rainbow(object):
             b = int(255 - pos * 3)
         return (r, g, b) if self.pixel_order in (neopixel.RGB, neopixel.GRB) else (r, g, b, 0)
 
-    def rainbow_cycle(self, wait):
+    def rainbow(self, wait=0.001):
         for j in range(255):
             for i in range(self.num_pixels):
                 pixel_index = (i * 256 // self.num_pixels) + j
@@ -41,7 +41,7 @@ class Rainbow(object):
             self.pixels.show()
             time.sleep(wait)
     
-    def run(self, iterations=None, wait=0.001):
+    def run(self, wait=0.001):
         try:
             while True:
                 self.rainbow_cycle(wait)

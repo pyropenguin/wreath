@@ -12,7 +12,7 @@ class CandyCane(object):
             self.pixel_pin, self.num_pixels, brightness=self.brightness, auto_write=False, pixel_order=self.pixel_order
         )
 
-    def candy_cane(self, wait):
+    def candy_cane(self, wait=0.001):
         stripe_width = 20
         for j in range(self.num_pixels):
             for i in range(self.num_pixels):
@@ -22,7 +22,7 @@ class CandyCane(object):
             self.pixels.show()
             time.sleep(wait)
 
-    def candy_cane_onoff(self, wait):
+    def candy_cane_onoff(self, wait=0.001):
         stripe_width = 20
         periods = 50
         for p in range(2*periods):
