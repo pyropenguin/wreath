@@ -5,9 +5,16 @@ import cv2
 import board
 import neopixel
 from time import sleep
+import numpy as np
 
 SET_PIXELS = True
 SHOW_FRAME = False
+
+def dampening_factor(x, dmp_start=200, dmp_end=800):
+    damp = 1 - (x - dmp_start) / (dmp_end - dmp_start)
+    damp = min(damp, 1)
+    damp = max(damp, 0)
+    return damp
 
 class VideoToLights(object):
     def __init__(self, num_pixels=200, pixel_pin=board.D18, brightness=0.4, pixel_order=neopixel.GRB):
@@ -21,6 +28,9 @@ class VideoToLights(object):
         # Create a new ImageCapture object
         self.cap = cv2.VideoCapture(0)
         self.prev_frame = None
+
+        self.frame_avg_length = 20
+        self.frame_avg = np.full(self.frame_avg_length, np.nan)
     
     def video_to_lights(self, wait=0.001):
         # Capture an image
@@ -46,6 +56,12 @@ class VideoToLights(object):
                 frame = cv2.subtract(tmp, self.prev_frame)
                 _,frame = cv2.threshold(frame, 5, 255, cv2.THRESH_BINARY)
             self.prev_frame = tmp.copy()
+
+            self.frame_avg = np.roll(self.frame_avg, 1)
+            self.frame_avg[0] = np.mean(frame)
+            frame_sum = np.nansum(self.frame_avg)
+            #print('Frame sum:', frame_sum, "Dampeing:", dampening_factor(frame_sum))
+            frame = cv2.multiply(frame, dampening_factor(frame_sum))
 
             # LED Pixel Loading
             if SET_PIXELS:
