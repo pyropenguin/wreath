@@ -44,7 +44,7 @@ class Rainbow(object):
     def run(self, wait=0.001):
         try:
             while True:
-                self.rainbow_cycle(wait)
+                self.rainbow(wait)
         except KeyboardInterrupt:
             for i in range(self.num_pixels):
                 self.pixels[i] = (0,0,0)
