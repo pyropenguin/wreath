@@ -14,7 +14,8 @@ from candy_cane import CandyCane
 from circle_runners import CircleRunners
 from rainbow import Rainbow
 from rings import Rings
-from video_to_lights import VideoToLights
+from light_speed import LightSpeed
+# from video_to_lights import VideoToLights
 
 class Main(object):
     def __init__(self, duration_seconds=3600*4):
@@ -23,7 +24,8 @@ class Main(object):
         self.circle_runners = CircleRunners()
         self.rainbow = Rainbow()
         self.rings = Rings()
-        self.video_to_lights = VideoToLights()
+        self.light_speed = LightSpeed()
+        # self.video_to_lights = VideoToLights()
         self.duration_seconds = duration_seconds
         self.start_time = time()
     
@@ -42,7 +44,9 @@ class Main(object):
                 self.run_iterations(self.circle_runners.circle_runners, 100)
                 self.run_iterations(self.rainbow.rainbow, 5)
                 self.run_iterations(self.rings.rings, 5)
-                self.run_iterations(self.video_to_lights.video_to_lights, 100)
+                self.run_iterations(self.light_speed.light_speed, 125)
+                self.light_speed.reset()
+                # self.run_iterations(self.video_to_lights.video_to_lights, 100)
         except KeyboardInterrupt:
             logging.info('KeyboardInterrupt')
             pass
